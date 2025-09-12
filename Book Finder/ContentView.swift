@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct ContentView: View {
     @StateObject private var serachModel = SearchViewModel()
     @State private var hasSearched = false
@@ -17,7 +16,7 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 15) {
 
-                //MARK: Search Bar
+                // MARK: Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -29,8 +28,9 @@ struct ContentView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
                 .padding(.horizontal)
+                .padding(.top, 20)
 
-                //MARK: Search Button
+                // MARK: Search Button
                 Button(action: {
                     hasSearched = true
                     Task { await serachModel.search() }
@@ -43,8 +43,9 @@ struct ContentView: View {
                         .cornerRadius(10)
                 }
                 .padding(.horizontal)
+                .padding(.bottom, 8)
 
-                //MARK: Scrollable View
+                // MARK: Scrollable View
                 ScrollView {
                     VStack(spacing: 16) {
                         if serachModel.isLoading && serachModel.books.isEmpty {
@@ -62,6 +63,7 @@ struct ContentView: View {
                                 Text("No books found")
                                     .font(.headline)
                                     .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
                             }
                             .frame(maxWidth: .infinity, minHeight: 300)
                         } else {
@@ -83,7 +85,8 @@ struct ContentView: View {
                             }
                         }
                     }
-                    .padding()
+                    .padding(.bottom, 20)
+                    .padding(.horizontal)
                 }
                 .frame(maxHeight: .infinity)
                 .refreshable {
@@ -93,9 +96,15 @@ struct ContentView: View {
                     }
                 }
 
-
             }
-            .navigationTitle("Book Finder")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Book Finder")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.primary)
+                }
+            }
             .ignoresSafeArea(.container, edges: .bottom)
         }
     }

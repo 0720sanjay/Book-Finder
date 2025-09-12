@@ -73,7 +73,7 @@ struct BookDetailView: View {
                 }
                 
                 Text(bookDetailsModel.details?.title ?? bookDetailsModel.initialBook?.title ?? "Unknown title")
-                    .font(.title)
+                    .font(.system(size: 16, weight: .bold, design: .default))
                     .bold()
                 
                 if let authors = bookDetailsModel.initialBook?.author_name?.joined(separator: ", ") {
@@ -99,7 +99,16 @@ struct BookDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(bookDetailsModel.details?.title ?? bookDetailsModel.initialBook?.title ?? "Details")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(bookDetailsModel.initialBook?.title ?? "Details")
+                    .font(.system(size: 18, weight: .bold)) 
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+
         .onAppear {
             rotating = true
             Task { await bookDetailsModel.fetch() }

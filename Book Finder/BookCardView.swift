@@ -11,11 +11,11 @@ struct BookCardView: View {
     let book: BookDoc
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 8) {
             AsyncImage(url: coverURL) { image in
                 image
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             } placeholder: {
                 Rectangle()
                     .fill(Color.gray.opacity(0.3))
@@ -30,13 +30,16 @@ struct BookCardView: View {
             .clipped()
 
             Text(book.title ?? "Untitled")
-                .font(.headline)
+                .font(.system(size: 16, weight: .semibold))
+                .multilineTextAlignment(.center)
                 .lineLimit(2)
 
             Text(book.author_name?.first ?? "Unknown Author")
-                .font(.subheadline)
+                .font(.system(size: 14))
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity)
         .padding()
         .background(Color.white)
         .cornerRadius(12)
