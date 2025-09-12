@@ -1,2 +1,15 @@
-# Book-Finder
-Book Finder is a simple and easy-to-use iOS app that helps you search for books and view their details. It uses the Open Library API to show book titles, authors, covers, and more.  The app is built using Swift and SwiftUI, and follows a clean structure (MVVM + Clean Architecture) to keep the code organized and easy to maintain.
+
+# Book Finder App
+
+Book Finder is a simple iOS app to search and view book details using the Open Library API.
+
+## Features
+- Search books by title
+- Pull-to-refresh and animations
+- View author, cover
+- Save favorites locally
+- Error handling and loading states
+- Animated book cover
+- Clean architecture principles implemented
+- Unit tests
+- SQLite local storage for saved books
