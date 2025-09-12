@@ -13,39 +13,47 @@ struct ContentView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 15) {
 
                 // MARK: Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    TextField("Search books...", text: $serachModel.query)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                HStack(spacing: 0) {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                        TextField("Search books...", text: $serachModel.query)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                    }
+                    .padding(.leading, 12)
+                    .frame(height: 48)
+                    .background(Color(.systemGray6))
+
+                    Button(action: {
+                        hasSearched = true
+                        Task { await serachModel.search() }
+                    }) {
+                        Text("Search")
+                            .fontWeight(.semibold)
+                            .frame(width: 80, height: 48)
+                            .background(Color.indigo)
+                            .foregroundColor(.white)
+                    }
                 }
-                .padding()
-                .background(Color(.systemGray6))
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.top, 20)
 
-                // MARK: Search Button
-                Button(action: {
-                    hasSearched = true
-                    Task { await serachModel.search() }
-                }) {
-                    Text("Search")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.indigo)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding(.horizontal)
-                .padding(.bottom, 8)
+                .padding(.top, 20)
 
-                // MARK: Scrollable View
+                // MARK: Books list
                 ScrollView {
                     VStack(spacing: 16) {
                         if serachModel.isLoading && serachModel.books.isEmpty {
@@ -56,7 +64,7 @@ struct ContentView: View {
                                 }
                             }
                         } else if hasSearched && serachModel.books.isEmpty {
-                            VStack(spacing: 12) {
+                            VStack(spacing: 5) {
                                 Image(systemName: "book.closed")
                                     .font(.system(size: 40))
                                     .foregroundColor(.gray)
@@ -85,10 +93,9 @@ struct ContentView: View {
                             }
                         }
                     }
-                    .padding(.bottom, 20)
                     .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
-                .frame(maxHeight: .infinity)
                 .refreshable {
                     let trimmedQuery = serachModel.query.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !trimmedQuery.isEmpty {
@@ -97,14 +104,17 @@ struct ContentView: View {
                 }
 
             }
+            .background(Color(.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Book Finder")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.primary)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
                 }
             }
+            .toolbarBackground(Color.indigo, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .ignoresSafeArea(.container, edges: .bottom)
         }
     }

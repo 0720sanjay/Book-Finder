@@ -24,7 +24,7 @@
 
 # Database Design
   1) Local Storage: Uses SQLite to store a user's favorite books locally.
-  2) Separation: SQLiteManager handles low-level database tasks. This keeps the ViewModel clean and database-agnostic.
+  2) Separation: SQLiteManager handles low-level database tasks. This keeps the ViewModel clean and database.
 
 # Known Limitations
   1) Limited Error Handling: No detailed user messages for network errors.

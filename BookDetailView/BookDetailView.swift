@@ -99,15 +99,27 @@ struct BookDetailView: View {
             }
             .padding()
         }
+//        .navigationBarTitleDisplayMode(.inline)
+//        .toolbar {
+//            ToolbarItem(placement: .principal) {
+//                Text(bookDetailsModel.initialBook?.title ?? "Details")
+//                    .font(.system(size: 18, weight: .bold)) 
+//                    .lineLimit(1)
+//                    .minimumScaleFactor(0.8)
+//            }
+//        }
+        .background(Color(.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(bookDetailsModel.initialBook?.title ?? "Details")
-                    .font(.system(size: 18, weight: .bold)) 
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
             }
         }
+        .toolbarBackground(Color.indigo, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+
 
         .onAppear {
             rotating = true
