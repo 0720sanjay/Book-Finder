@@ -33,12 +33,10 @@ My Favouite List
 1. Language: Swift
 2. Xcode - 16.4
 4. UI: SwiftUI
-5. Architecture: MVVM with Clean Architecture
-6. Networking: URLSession
-7.Database: SQLite
-8.Images: AsyncImage
-9.State Management: ObservableObject
-10.Dependency Injection: Manual
+5. Networking: URLSession
+6.Database: SQLite
+7.Images: AsyncImage
+8.State Management: ObservableObject
 
 # Architecture
 1. MVVM and Clean Architecture
