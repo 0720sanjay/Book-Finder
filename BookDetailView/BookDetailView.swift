@@ -7,128 +7,123 @@
 import SwiftUI
 
 struct BookDetailView: View {
-    
-    @StateObject private var bookDetailsModel: BookDetailViewModel
-    @State private var rotating = false
-    
-    
-    init(book: BookDoc? = nil) {
-        let workKey = book?.key ?? ""
-        _bookDetailsModel = StateObject(wrappedValue: BookDetailViewModel(workKey: workKey, book: book))
-    }
-    
-    //MARK: Body View
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 16) {
-                    
-                    // Cover Image
-                    if let coverId = bookDetailsModel.initialBook?.cover_i {
-                        AsyncImage(url: URL(string: "https://covers.openlibrary.org/b/id/\(coverId)-L.jpg")) { phase in
-                            switch phase {
-                            case .empty:
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.gray.opacity(0.25))
-                                    .frame(width: 140, height: 210)
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 140, height: 210)
-                                    .cornerRadius(8)
-                                    .rotationEffect(.degrees(rotating ? 360 : 0))
-                                    .animation(.linear(duration: 12).repeatForever(autoreverses: false), value: rotating)
-                            case .failure:
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.gray.opacity(0.25))
-                                    .frame(width: 140, height: 210)
-                            @unknown default: EmptyView()
+@StateObject private var bookDetailsModel: BookDetailViewModel
+@State private var rotating = false
+
+init(book: BookDoc? = nil) {
+    let workKey = book?.key ?? ""
+    _bookDetailsModel = StateObject(wrappedValue: BookDetailViewModel(workKey: workKey, book: book))
+}
+
+var body: some View {
+    ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+            
+            HStack(alignment: .top, spacing: 16) {
+                coverImage
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(bookDetailsModel.details?.title ?? bookDetailsModel.initialBook?.title ?? "Unknown Title")
+                                .font(.system(size: 18, weight: .bold))
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.8)
+                            
+                            if let author = bookDetailsModel.initialBook?.author_name?.joined(separator: ", ") {
+                                Text(author)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
                             }
                         }
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.25))
-                            .frame(width: 140, height: 210)
-                            .rotationEffect(.degrees(rotating ? 360 : 0))
-                            .animation(.linear(duration: 12).repeatForever(autoreverses: false), value: rotating)
-                    }
-                    
-                    Spacer()
-                    
-                    // MARK: Favorite Button
-                    VStack {
+                        
+                        Spacer()
+                        
                         Button(action: { bookDetailsModel.toggleFavorite() }) {
                             Image(systemName: bookDetailsModel.isFavorite ? "heart.fill" : "heart")
                                 .resizable()
                                 .frame(width: 28, height: 26)
                                 .foregroundColor(bookDetailsModel.isFavorite ? .red : .primary)
                         }
-                        .padding(.bottom, 8)
-                        
-                        if bookDetailsModel.isLoading {
-                            ProgressView()
-                        }
+                    }
+                    
+                    if bookDetailsModel.isLoading {
+                        ProgressView().padding(.top, 8)
                     }
                 }
-                
-                Text(bookDetailsModel.details?.title ?? bookDetailsModel.initialBook?.title ?? "Unknown title")
-                    .font(.system(size: 16, weight: .bold, design: .default))
-                    .bold()
-                
-                if let authors = bookDetailsModel.initialBook?.author_name?.joined(separator: ", ") {
-                    Text(authors)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                if let desc = bookDetailsModel.details?.description?.value {
-                    Text(desc)
-                        .font(.body)
-                } else if bookDetailsModel.isLoading {
-                    Text("Loading description...")
-                        .foregroundColor(.secondary)
-                }
-                
-                if let subjects = bookDetailsModel.details?.subjects, !subjects.isEmpty {
-                    Text("Subjects").font(.headline)
-                    FlowView(tags: subjects)
-                }
-                
-                Spacer()
             }
-            .padding()
-        }
-//        .navigationBarTitleDisplayMode(.inline)
-//        .toolbar {
-//            ToolbarItem(placement: .principal) {
-//                Text(bookDetailsModel.initialBook?.title ?? "Details")
-//                    .font(.system(size: 18, weight: .bold)) 
-//                    .lineLimit(1)
-//                    .minimumScaleFactor(0.8)
-//            }
-//        }
-        .background(Color(.systemGroupedBackground))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(bookDetailsModel.initialBook?.title ?? "Details")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
+            
+            if let desc = bookDetailsModel.details?.description?.value {
+                Text(desc)
+                    .font(.body)
+            } else if bookDetailsModel.isLoading {
+                Text("Loading description...")
+                    .foregroundColor(.secondary)
+            }
+            
+            if let subjects = bookDetailsModel.details?.subjects, !subjects.isEmpty {
+                Text("Subjects")
+                    .font(.headline)
+                FlowView(tags: subjects)
             }
         }
-        .toolbarBackground(Color.indigo, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .padding()
+    }
+    .background(Color(.systemGroupedBackground))
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar {
+        ToolbarItem(placement: .principal) {
+            Text(bookDetailsModel.initialBook?.title ?? "Details")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(.white)
+        }
+    }
+    .toolbarBackground(Color.indigo, for: .navigationBar)
+    .toolbarBackground(.visible, for: .navigationBar)
+    .onAppear {
+        rotating = true
+        Task { await bookDetailsModel.fetch() }
+    }
+}
 
-
-        .onAppear {
-            rotating = true
-            Task { await bookDetailsModel.fetch() }
+// MARK: - Cover Image
+private var coverImage: some View {
+    Group {
+        if let id = bookDetailsModel.initialBook?.cover_i {
+            AsyncImage(url: URL(string: "https://covers.openlibrary.org/b/id/\(id)-L.jpg")) { phase in
+                switch phase {
+                case .empty:
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.25))
+                        .frame(width: 140, height: 210)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 140, height: 210)
+                        .cornerRadius(8)
+                        .rotationEffect(.degrees(rotating ? 360 : 0))
+                        .animation(.linear(duration: 12).repeatForever(autoreverses: false), value: rotating)
+                case .failure:
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.25))
+                        .frame(width: 140, height: 210)
+                @unknown default: EmptyView()
+                }
+            }
+        } else {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.gray.opacity(0.25))
+                .frame(width: 140, height: 210)
         }
     }
 }
 
-//MARK: Flowview
+}
+
+
+//MARK: Flow view
 struct FlowView: View {
     let tags: [String]
     var body: some View {
@@ -143,7 +138,7 @@ struct FlowView: View {
 }
 
 
-//MARK: FlexibleView
+//MARK: Flexible View
 struct FlexibleView<Data: RandomAccessCollection, Content: View>: View where Data.Element: Hashable {
     let data: Data
     let spacing: CGFloat

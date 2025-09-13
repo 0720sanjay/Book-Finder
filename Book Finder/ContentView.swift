@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var serachModel = SearchViewModel()
-    @State private var hasSearched = false
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+@StateObject private var serachModel = SearchViewModel()
+@State private var hasSearched = false
+let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 15) {
-
+var body: some View {
+    NavigationStack {
+        ZStack {
+            VStack(spacing: 12) {
                 // MARK: Search Bar
                 HStack(spacing: 0) {
                     HStack {
@@ -28,7 +28,7 @@ struct ContentView: View {
                     .padding(.leading, 12)
                     .frame(height: 48)
                     .background(Color(.systemGray6))
-
+                    
                     Button(action: {
                         hasSearched = true
                         Task { await serachModel.search() }
@@ -47,12 +47,15 @@ struct ContentView: View {
                 )
                 .cornerRadius(10)
                 .padding(.horizontal)
-                .padding(.top, 20)
-
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .padding(.horizontal)
-                .padding(.top, 20)
-
+                .padding(.top, 12)
+                
+                //MARK: Instruction label
+                Text("Type a book title, then tap Search")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                
                 // MARK: Books list
                 ScrollView {
                     VStack(spacing: 16) {
@@ -84,7 +87,7 @@ struct ContentView: View {
                                         Task { await serachModel.loadMoreIfNeeded(currentBook: book) }
                                     }
                                 }
-
+                                
                                 if serachModel.isLoadingMore {
                                     ProgressView("Loading more...")
                                         .frame(maxWidth: .infinity)
@@ -96,28 +99,34 @@ struct ContentView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 20)
                 }
+                
                 .refreshable {
                     let trimmedQuery = serachModel.query.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !trimmedQuery.isEmpty {
                         await serachModel.search(reset: true)
                     }
                 }
-
+                
             }
             .background(Color(.systemGroupedBackground))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Book Finder")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
-                }
-            }
-            .toolbarBackground(Color.indigo, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .ignoresSafeArea(.container, edges: .bottom)
+            
+            //MARK: Activity indicator
+            ActivityIndicator(isAnimating: $serachModel.isLoading, label: "Searching...")
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Book Finder")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+
+            }
+        }
+        .toolbarBackground(Color.indigo, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
+}
 }
 
 
