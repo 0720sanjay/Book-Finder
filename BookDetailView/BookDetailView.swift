@@ -45,6 +45,7 @@ var body: some View {
                                 .resizable()
                                 .frame(width: 28, height: 26)
                                 .foregroundColor(bookDetailsModel.isFavorite ? .red : .primary)
+
                         }
                     }
                     
