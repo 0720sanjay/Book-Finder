@@ -19,11 +19,13 @@ Book Finder is a simple and easy-to-use iOS app that helps you search for books 
 
 # Screen Capture
 
-
+Book List
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2025-09-13 at 11 35 38" src="https://github.com/user-attachments/assets/8fcae059-70e8-4226-9814-e4a299701b36" />
+Book Details Page
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2025-09-13 at 11 35 45" src="https://github.com/user-attachments/assets/e1846193-842e-46cb-bf50-1be7d4ce277a" />
+Scroll Refresh API Call
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2025-09-13 at 11 35 51" src="https://github.com/user-attachments/assets/45c6d406-d48b-44e4-93cd-0282760636ec" />
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2025-09-13 at 11 56 02" src="https://github.com/user-attachments/assets/da0069da-f917-4e89-aaad-78634c9137c2" />
+My Favouite List
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2025-09-13 at 12 48 26" src="https://github.com/user-attachments/assets/b4bb0b1a-3ef2-4b44-8794-ecd735fbd956" />
 
 
